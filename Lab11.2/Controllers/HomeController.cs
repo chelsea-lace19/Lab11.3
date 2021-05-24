@@ -1,6 +1,8 @@
 ﻿using Lab11._2.Models;
+using Dapper.Contrib.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +14,8 @@ namespace Lab11._2.Controllers
 {
     public class HomeController : Controller
     {
+        static MySqlConnection dab = new MySqlConnection("Server=127.0.0.1;Database=coffeehouse;Uid=root;Password=abc123");
+
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -21,7 +25,14 @@ namespace Lab11._2.Controllers
 
         public IActionResult Index()
         {
+            //ViewBag.Products = dab.GetAll<Product>().ToList();
             return View();
+        }
+
+        public IActionResult _Layout()
+        {
+            List<Product> prod = dab.GetAll<Product>().ToList();
+            return View(prod);
         }
 
         public IActionResult registrationform()
@@ -54,6 +65,21 @@ namespace Lab11._2.Controllers
         {
             return View();
         }
+
+        public IActionResult menu()
+        {
+            List<Product> prod = dab.GetAll<Product>().ToList();
+            return View(prod);
+        }
+
+
+        public IActionResult detail(int id)
+        {
+            Product prod = dab.Get<Product>(id);
+            return View(prod);
+        }
+
+
 
         public IActionResult Privacy()
         {
